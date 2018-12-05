@@ -43,6 +43,7 @@
                                 <EditText
                                         android:id="@+id/et_main_lineLength"
                                         android:hint="진자의 줄의 길이!"
+
                                         android:layout_weight="4"
                                         android:layout_width="0dp"
                                         android:layout_height="match_parent"/>
@@ -59,7 +60,7 @@
                                 android:layout_marginHorizontal="16dp"/>
                         <Button
                                 android:id="@+id/btn_main_btSend"
-                                android:text="보내기"
+                                android:text="기댓값 확인"
                                 android:layout_width="match_parent"
                                 android:layout_height="40dp"
                                 android:textColor="#FFFFFF"
@@ -74,6 +75,7 @@
                                android:layout_height="wrap_content">
                            <TextView
                                    android:layout_weight="1"
+                                   android:id="@+id/bt_main_Calculate"
                                    android:text="기댓값 :"
                                    android:textColor="#000000"
                                    android:gravity="center"

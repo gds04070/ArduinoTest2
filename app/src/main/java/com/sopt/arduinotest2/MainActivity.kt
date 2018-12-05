@@ -17,6 +17,7 @@ import com.sopt.arduinotest2.adapter.ChartDataRecyclerViewAdapter
 import com.sopt.arduinotest2.db.ChartData
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.tvInputManager
 import java.lang.IndexOutOfBoundsException
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     var n : Int = 1
+
 
     lateinit var ChartDataRecyclerViewAdapter : ChartDataRecyclerViewAdapter
 
@@ -49,6 +51,8 @@ class MainActivity : AppCompatActivity() {
 
         setOnBtnClickListener()
 
+
+
         if(!bt.isBluetoothAvailable){
             Toast.makeText(applicationContext, "Bluetooth is not available", Toast.LENGTH_SHORT).show()
         }
@@ -56,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         onBluetooth()
 
     }
+
 
     //블루투스
     private fun onBluetooth(){
@@ -244,6 +249,7 @@ class MainActivity : AppCompatActivity() {
     //버튼 클릭리스너
     private fun setOnBtnClickListener(){
         removeItem()
+        CalculateExpValue()
     }
 
 
@@ -260,5 +266,20 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun CalculateExpValue() {
+        bt_main_Calculate.setOnClickListener {
+            var Length : String = et_main_lineLength.text.toString()
+            var g : Double = 9.8
+            if(Length.isNotEmpty()){
+                if(Length.toDouble() > 0.0){
 
+                    var expectValue = 2*Math.PI*Math.sqrt(Length.toDouble()/g)
+                    tv_main_expectValue.setText(expectValue.toString())
+
+                }else{
+                    tv_main_receiveText.setText("유효한 줄의 길이가 아닙니다")
+                }
+            }
+        }
+    }
 }
