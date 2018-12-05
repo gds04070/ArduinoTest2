@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import android.widget.ViewAnimator
 import app.akexorcist.bluetotohspp.library.BluetoothSPP
 import app.akexorcist.bluetotohspp.library.BluetoothState
 import app.akexorcist.bluetotohspp.library.DeviceList
@@ -24,10 +25,21 @@ class MainActivity : AppCompatActivity() {
         BluetoothSPP(this)
     }
 
+    var n : Int = 1
+
     lateinit var ChartDataRecyclerViewAdapter : ChartDataRecyclerViewAdapter
+
     val dataList: ArrayList<ChartData> by lazy {
         ArrayList<ChartData>()
-    }
+    } //리사이클러뷰
+
+    val DataArray: ArrayList<Any> by lazy {
+        ArrayList<Any>()
+    } //블루투스로 받는 데이터
+
+    val ViewArray: ArrayList<String> by lazy {
+        ArrayList<String>()
+    } //뷰에 넣을 데이터
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +59,36 @@ class MainActivity : AppCompatActivity() {
 
     //블루투스
     private fun onBluetooth(){
+
+        var i :Int = 0
+
         bt.setOnDataReceivedListener(object : BluetoothSPP.OnDataReceivedListener{ //데이터 수신
             override fun onDataReceived(data: ByteArray?, message: String?) {
                 Toast.makeText(this@MainActivity,message, Toast.LENGTH_SHORT).show()
                 tv_main_receiveText.setText(message) //받아서 리사이클뷰에 additem,
+
+                if(!message.isNullOrEmpty()){
+                        DataArray[i] = message!!
+                        i = i+1
+                }
+
+                if(i >= 10){
+                    i = 0
+
+                    var sum : Double = 0.0
+
+                    for(j in 0..9){
+                        sum = sum + DataArray[j].toString().toDouble()
+                    }
+
+                    DataArray[10] = (sum/10).toString()
+
+                    addItem(n)
+
+                    DataArray.removeAll(DataArray)
+                    n = n+1
+                }
+
             }
         })
 
@@ -102,6 +140,7 @@ class MainActivity : AppCompatActivity() {
     private fun setup(){ //데이터 보내는 루트 LED반짝일지 말지
         val btnSend = findViewById<Button>(R.id.btn_main_btSend)
         btnSend.setOnClickListener {
+
             bt.send("F",true)
         }
     }
@@ -125,38 +164,81 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setRecyclerView(){
-        dataList.add(ChartData(1, "0","0","0", "0","0","0"
+     /*   dataList.add(ChartData(1, "0","0","0", "0","0","0"
         ,"0","0","0","0","0"))
-        dataList.add(ChartData(2, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(3, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(4, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(5, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(6, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(7, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(8, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(9, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(10, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
-        dataList.add(ChartData(11, "0","0","0", "0","0","0"
-            ,"0","0","0","0","0"))
+
+        //addItem()
+        ViewArray.add("0")
+        ViewArray.add("1")
+        ViewArray.add("2")
+        ViewArray.add("3")
+        ViewArray.add("4")
+        ViewArray.add("5")
+        ViewArray.add("6")
+        ViewArray.add("7")
+        ViewArray.add("8")
+        ViewArray.add("9")
+        ViewArray.add("10")
+        val chartData: ChartData = ChartData(0, ViewArray[0], ViewArray[1], ViewArray[2], ViewArray[3], ViewArray[4], ViewArray[5],
+            ViewArray[6], ViewArray[7], ViewArray[8], ViewArray[9],ViewArray[10])
+        dataList.add(chartData)
+        //
+*/
         ChartDataRecyclerViewAdapter = ChartDataRecyclerViewAdapter(this,dataList)
         rv_main_chartDataList.adapter = ChartDataRecyclerViewAdapter
         rv_main_chartDataList.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun addItem(){
+    private fun addItem(n : Int){
      //if로 블루투스로 받은데이터가 is not empty면
+        /*ViewArray.add("0")
+        ViewArray.add("1")
+        ViewArray.add("2")
+        ViewArray.add("3")
+        ViewArray.add("4")
+        ViewArray.add("5")
+        ViewArray.add("6")
+        ViewArray.add("7")
+        ViewArray.add("8")
+        ViewArray.add("9")
+        ViewArray.add("10")*/
+        moveArray()
         val position = ChartDataRecyclerViewAdapter.itemCount
+
         //ChartDataRecyclerViewAdapter.dataList.add(Chartdata(블루투스로 받은 데이터))
+        ChartDataRecyclerViewAdapter.dataList.add(
+            ChartData(n, ViewArray[0], ViewArray[1], ViewArray[2], ViewArray[3], ViewArray[4], ViewArray[5], ViewArray[6],
+            ViewArray[7], ViewArray[8], ViewArray[9], ViewArray[10])
+        )
+
         ChartDataRecyclerViewAdapter.notifyItemInserted(position)
+    }
+
+
+    private fun moveArray(){//받은거 차트데이터에 연결 dataArray->ViewArray
+       /* DataArray.add("0")
+        DataArray.add("1")
+        DataArray.add("2")
+        DataArray.add("3")
+        DataArray.add("4")
+        DataArray.add("5")
+        DataArray.add("6")
+        DataArray.add("7")
+        DataArray.add("8")
+        DataArray.add("9")
+        DataArray.add("10")*/
+        ViewArray.removeAll(ViewArray)
+        ViewArray.add(DataArray[0].toString())
+        ViewArray.add(DataArray[1].toString())
+        ViewArray.add(DataArray[2].toString())
+        ViewArray.add(DataArray[3].toString())
+        ViewArray.add(DataArray[4].toString())
+        ViewArray.add(DataArray[5].toString())
+        ViewArray.add(DataArray[6].toString())
+        ViewArray.add(DataArray[7].toString())
+        ViewArray.add(DataArray[8].toString())
+        ViewArray.add(DataArray[9].toString())
+        ViewArray.add(DataArray[10].toString())
     }
 
     //버튼 클릭리스너
